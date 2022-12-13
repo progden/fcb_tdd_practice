@@ -27,6 +27,7 @@ public class InwardRemittanceClaim {
         //生成
         //保存
 
-        return null;
+        ClaimOutputModel rs = new ClaimOutputModel();
+        return rs;
     }
 }

@@ -31,13 +31,26 @@ public class FirstTest {
         // AAA
         // Arrange
         ClaimInputModel model = new ClaimInputModel();
-        //model.setSeqNo("");
+        model.setSeqno(0);
 
         // Act
         var rs = claimService.claim(model);
 
         // Assert
-        //Assertions.assertEquals("error-001", rs.getErrorCode());
+        Assertions.assertEquals("error-001", rs.getErrorCode());
     }
 
+    @Test
+    public void GivenSevenSeqNOShouldError() {
+        // AAA
+        // Arrange
+        ClaimInputModel model = new ClaimInputModel();
+        model.setSeqno(0);
+
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
+        Assertions.assertEquals("error-001", rs.getErrorCode());
+    }
 }
