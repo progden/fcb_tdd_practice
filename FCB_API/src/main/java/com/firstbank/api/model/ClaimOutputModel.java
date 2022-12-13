@@ -2,8 +2,16 @@ package com.firstbank.api.model;
 
 public class ClaimOutputModel {
 
+    private String errorCode;
+
+
     public String getErrorCode() {
-        return "error-001";
+        return  errorCode;
+
     }
 
+    public void setErrorCode(String error){
+
+        this.errorCode = error;
+    }
 }

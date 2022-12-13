@@ -23,11 +23,14 @@ public class InwardRemittanceClaim {
 
     @GetMapping("/claim")
     public ClaimOutputModel claim(ClaimInputModel model) {
+        ClaimOutputModel rs = new ClaimOutputModel();
         //validate
+        int num = model.getSeqno();
+        if(num > 2){
+            rs.setErrorCode("error-001");
+        }
         //生成
         //保存
-
-        ClaimOutputModel rs = new ClaimOutputModel();
         return rs;
     }
 }

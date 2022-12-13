@@ -1,6 +1,8 @@
 package com.firstbank.api.model;
 
 public class ClaimInputModel {
+    private int seqno;
+    
     public int getSeqno() {
         return seqno;
     }
@@ -9,5 +11,5 @@ public class ClaimInputModel {
         this.seqno = seqno;
     }
 
-    private int seqno;
+
 }

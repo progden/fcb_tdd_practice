@@ -31,7 +31,7 @@ public class FirstTest {
         // AAA
         // Arrange
         ClaimInputModel model = new ClaimInputModel();
-        model.setSeqno(0);
+        model.setSeqno(3);
 
         // Act
         var rs = claimService.claim(model);
@@ -41,11 +41,11 @@ public class FirstTest {
     }
 
     @Test
-    public void GivenSevenSeqNOShouldError() {
+    public void GivenSevenSeqNo() {
         // AAA
         // Arrange
         ClaimInputModel model = new ClaimInputModel();
-        model.setSeqno(0);
+        model.setSeqno(1234567);
 
         // Act
         var rs = claimService.claim(model);
