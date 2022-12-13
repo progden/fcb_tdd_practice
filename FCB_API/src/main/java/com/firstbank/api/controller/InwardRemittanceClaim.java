@@ -1,5 +1,7 @@
 package com.firstbank.api.controller;
 
+import com.firstbank.api.model.ClaimInputModel;
+import com.firstbank.api.model.ClaimOutputModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,13 +11,14 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api")
-public class FirstCtrl {
+public class InwardRemittanceClaim {
 
-    @GetMapping("/test")
-    public Map<String, String> test() {
-        Map<String, String> result = new HashMap<>();
-        result.put("test", "test");
+    @GetMapping("/claim")
+    public ClaimOutputModel claim(ClaimInputModel model) {
+        //validate
+        //生成
+        //保存
 
-        return result;
+        return null;
     }
 }
