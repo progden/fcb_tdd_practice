@@ -1,9 +1,15 @@
 package com.firstbank.api.model;
 
+import lombok.Data;
+
 public class ClaimOutputModel {
+	private String errorCode;
 
 	public String getErrorCode() {
+		return errorCode;
+	}
 
-		return "error-001";
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
 	}
 }

@@ -4,13 +4,22 @@ import java.math.BigDecimal;
 
 public class ClaimInputModel {
 
+	/**
+	 *
+	 */
 	private int seqNo;
 	private String fxNo;
 	private String updateSeq;
-	private String txVersion;
+	/**
+	 * 版別
+	 */
+	private int txVersion;
 	private String prePaidFlag;
 	private String advDate;
-	private String recvBranch;
+	/**
+	 * 受理行
+	 */
+	private int recvBranch;
 	private String valueDate;
 	private String txDate;
 	private String sendBank;
@@ -63,11 +72,11 @@ public class ClaimInputModel {
 		this.updateSeq = updateSeq;
 	}
 
-	public String getTxVersion() {
+	public int getTxVersion() {
 		return txVersion;
 	}
 
-	public void setTxVersion(String txVersion) {
+	public void setTxVersion(int txVersion) {
 		this.txVersion = txVersion;
 	}
 
@@ -87,11 +96,11 @@ public class ClaimInputModel {
 		this.advDate = advDate;
 	}
 
-	public String getRecvBranch() {
+	public int getRecvBranch() {
 		return recvBranch;
 	}
 
-	public void setRecvBranch(String recvBranch) {
+	public void setRecvBranch(int recvBranch) {
 		this.recvBranch = recvBranch;
 	}
 

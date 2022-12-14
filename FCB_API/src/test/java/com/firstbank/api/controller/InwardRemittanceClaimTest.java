@@ -7,6 +7,7 @@ import com.firstbank.api.model.ClaimInputModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,24 +21,45 @@ public class InwardRemittanceClaimTest {
 	InwardRemittanceClaim claimService;
 	private InwardRemittance irService;
 
+	ClaimInputModel  model = null;
 	@BeforeEach
 	public void init(){
 		irService = mock(InwardRemittance.class);
 		claimService = new InwardRemittanceClaim(irService);
+		model= new ClaimInputModel();
+		model.setSeqNo(1234567);
+		model.setRecvBranch(123);
 	}
 
+
+
 	@Test
-	@DisplayName(value = "測試seqno 不為空")
-	public void GivenEmptySeqNOShouldError() {
+	@DisplayName(value = "測試seqno 為7碼數字")
+	@Order(1)
+	public void GivenSeqNOShouldLength7() {
 		// AAA
 		// Arrange
-		ClaimInputModel model = new ClaimInputModel();
-		model.setSeqNo(0);
+
 
 		// Act
 		var rs = claimService.claim(model);
 
+
 		// Assert
-		Assertions.assertEquals("error-001", rs.getErrorCode());
+		Assertions.assertEquals("0000", rs.getErrorCode());
+	}
+	@Test
+	@DisplayName(value = "測試recvbranch 為3碼數字")
+	@Order(2)
+	public void GivenRecvBranchShouldLength3(){
+
+
+
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		Assertions.assertEquals("0000", rs.getErrorCode());
 	}
 }
