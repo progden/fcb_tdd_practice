@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 
 import com.firstbank.api.SpringAppBootstrapper;
 import com.firstbank.api.model.ClaimInputModel;
+import com.firstbank.api.model.ClaimOutputModel;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,42 +35,32 @@ public class InwardRemittanceClaimTest {
 		model.setRecvBranch(123);
 		model.setTxVersion(66);
 		model.setClaimAmt(new BigDecimal(399.325));
+		model.setClaimFxrate(new BigDecimal("1234.56789"));
 	}
 
 
 
 	@Test
 	@DisplayName(value = "測試seqno 為7碼數字")
-	@Order(1)
 	public void GivenSeqNOShouldLength7() {
 		// AAA
 		// Arrange
 
+
 		// Act
 		var rs = claimService.claim(model);
 
 
 		// Assert
+		shouldReturnSuccess(rs);
+	}
+
+	private static void shouldReturnSuccess(ClaimOutputModel rs) {
 		assertEquals("0000", rs.getErrorCode());
 	}
+
 	@Test
 	@DisplayName(value = "測試seqno 為8碼數字")
-	@Order(1)
-	public void GivenSeqNOShouldLength8() {
-		// AAA
-		// Arrange
-		model.setSeqNo(12345678);
-
-		// Act
-		var rs = claimService.claim(model);
-
-
-		// Assert
-		assertEquals("error-001", rs.getErrorCode());
-	}
-	@Test
-	@DisplayName(value = "測試seqno 為8碼數字")
-	@Order(1)
 	@ValueSource
 	public void GivenSeqNONotLength7ShouldReturnError() {
 		// AAA
@@ -81,11 +72,16 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		assertEquals("error-001", rs.getErrorCode());
+
+		shouldReturnError(rs, "error-001");
 	}
+
+	private static void shouldReturnError(ClaimOutputModel rs, String expected) {
+		Assertions.assertEquals(expected, rs.getErrorCode());
+	}
+
 	@Test
 	@DisplayName(value = "測試recvbranch 為3碼數字")
-	@Order(2)
 	public void GivenRecvBranchShouldLength3(){
 
 
@@ -95,12 +91,12 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		assertEquals("0000", rs.getErrorCode());
+		shouldReturnError(rs, "0000");
 	}
 
 	@Test
 	@DisplayName(value = "測試txversion 為2碼數字")
-	@Order(3)
+
 	public void GivenTxVersionShouldLength2(){
 
 
@@ -110,13 +106,13 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		assertEquals("0000", rs.getErrorCode());
+		shouldReturnError(rs, "0000");
 	}
 
 
 	@Test
 	@DisplayName(value = "測試SeqNo 只能是數字")
-	@Order(4)
+
 	public void GivenSeqNoShouldNum(){
 
 
@@ -126,13 +122,13 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		assertEquals("0000", rs.getErrorCode());
+		shouldReturnError(rs, "0000");
 	}
 
 
 	@Test
 	@DisplayName(value = "測試ClaimAmount只能是數字")
-	@Order(5)
+
 	public void GivenClaimAmountShouldNum(){
 
 
@@ -142,6 +138,36 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		assertEquals("0000", rs.getErrorCode());
+		shouldReturnError(rs, "0000");
 	}
+	@Test
+	@DisplayName(value = "測試即期買入claimFxrate必需為前4碼後5碼格式數字e.g 1234.56789")
+
+	public void GivenclaimFxrateFormat4point5ShouldReturnSuccess(){
+
+
+
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		shouldReturnSuccess(rs);
+
+	}
+	@Test
+	@DisplayName(value = "測試即期買入claimFxrate必需不為前4碼後5碼格式數字e.g 1234.56789")
+	public void GivenclaimFxrateErrorFormat4point5ShouldReturnError(){
+
+		model.setClaimFxrate(new BigDecimal(12345.6789));
+
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		shouldReturnError(rs, "error-014");
+
+	}
+
 }
