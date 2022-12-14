@@ -2,6 +2,7 @@ package com.firstbank.api.controller;
 
 import com.firstbank.api.model.ClaimInputModel;
 import com.firstbank.api.model.ClaimOutputModel;
+import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class InwardRemittanceClaim {
 		String errorCode = checkValue(model);
 		output.setErrorCode(errorCode);
 
+
 		//生成
 		//保存
 
@@ -35,7 +37,7 @@ public class InwardRemittanceClaim {
 	}
 	private String checkValue(ClaimInputModel model){
 		//validate
-		String errorCodeCompile = "0000";
+		String errorCodeCompile = "0000";  //success
 
 		// 1.驗證seqno
 		int seqNo = model.getSeqNo();
@@ -51,8 +53,34 @@ public class InwardRemittanceClaim {
 		if(!errorCodeCompile.equals(errorCodeRecvBranch)){
 			return errorCodeRecvBranch;
 		}
+
+		// 3.驗證txVersion
+		int txVersion = model.getTxVersion();
+		String errorCodeTxVersion = checkNumLength(txVersion,"error-017",2);
+		if(!errorCodeCompile.equals(errorCodeTxVersion)){
+			return errorCodeTxVersion;
+		}
+
+		// 4.驗證seqno為數字
+		int seqNoNum = model.getSeqNo();
+		String errorCodeSeqNoNum = checkIsNum(seqNoNum,"error-002");
+		if(!errorCodeCompile.equals(errorCodeSeqNoNum)){
+			return errorCodeSeqNoNum;
+		}
+
+		// 5.驗證CliaimAmount為數字
+		BigDecimal claimAmt = model.getClaimAmt();
+		String errorCodeClaimAmt = checkIsBigDecimalNum(claimAmt,"error-016");
+		if(!errorCodeCompile.equals(errorCodeClaimAmt)){
+			return errorCodeClaimAmt;
+		}
+
+
 		return errorCodeCompile;
 	}
+
+
+
 	public boolean checkErrorCode(String errorCode){
 		if("0000".equals(errorCode)){
 			return false;
@@ -65,6 +93,24 @@ public class InwardRemittanceClaim {
 		if (String.valueOf(seqNo).length() != length) {
 			result = errorCode;
 		}
+		return result;
+	}
+
+	private String checkIsNum(int input, String errorCode) {
+		String result = "0000";
+		if( input < 0 ){
+			result = errorCode;
+		}
+
+		return result;
+	}
+
+	private String checkIsBigDecimalNum(BigDecimal input, String errorCode) {
+		String result = "0000";
+		if( input.doubleValue() < 0 ){
+			result = errorCode;
+		}
+
 		return result;
 	}
 }

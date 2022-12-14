@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 
 import com.firstbank.api.SpringAppBootstrapper;
 import com.firstbank.api.model.ClaimInputModel;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,8 @@ public class InwardRemittanceClaimTest {
 		model= new ClaimInputModel();
 		model.setSeqNo(1234567);
 		model.setRecvBranch(123);
+		model.setTxVersion(66);
+		model.setClaimAmt(new BigDecimal(399.325));
 	}
 
 
@@ -52,6 +55,53 @@ public class InwardRemittanceClaimTest {
 	@DisplayName(value = "測試recvbranch 為3碼數字")
 	@Order(2)
 	public void GivenRecvBranchShouldLength3(){
+
+
+
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		Assertions.assertEquals("0000", rs.getErrorCode());
+	}
+
+	@Test
+	@DisplayName(value = "測試txversion 為2碼數字")
+	@Order(3)
+	public void GivenTxVersionShouldLength2(){
+
+
+
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		Assertions.assertEquals("0000", rs.getErrorCode());
+	}
+
+
+	@Test
+	@DisplayName(value = "測試SeqNo 只能是數字")
+	@Order(4)
+	public void GivenSeqNoShouldNum(){
+
+
+
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		Assertions.assertEquals("0000", rs.getErrorCode());
+	}
+
+
+	@Test
+	@DisplayName(value = "測試ClaimAmount只能是數字")
+	@Order(5)
+	public void GivenClaimAmountShouldNum(){
 
 
 
