@@ -1,5 +1,6 @@
 package com.firstbank.api.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import com.firstbank.api.SpringAppBootstrapper;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -43,13 +45,43 @@ public class InwardRemittanceClaimTest {
 		// AAA
 		// Arrange
 
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		assertEquals("0000", rs.getErrorCode());
+	}
+	@Test
+	@DisplayName(value = "測試seqno 為8碼數字")
+	@Order(1)
+	public void GivenSeqNOShouldLength8() {
+		// AAA
+		// Arrange
+		model.setSeqNo(12345678);
 
 		// Act
 		var rs = claimService.claim(model);
 
 
 		// Assert
-		Assertions.assertEquals("0000", rs.getErrorCode());
+		assertEquals("error-001", rs.getErrorCode());
+	}
+	@Test
+	@DisplayName(value = "測試seqno 為8碼數字")
+	@Order(1)
+	@ValueSource
+	public void GivenSeqNONotLength7ShouldReturnError() {
+		// AAA
+		// Arrange
+		model.setSeqNo(12345678);
+
+		// Act
+		var rs = claimService.claim(model);
+
+
+		// Assert
+		assertEquals("error-001", rs.getErrorCode());
 	}
 	@Test
 	@DisplayName(value = "測試recvbranch 為3碼數字")
@@ -63,7 +95,7 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		Assertions.assertEquals("0000", rs.getErrorCode());
+		assertEquals("0000", rs.getErrorCode());
 	}
 
 	@Test
@@ -78,7 +110,7 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		Assertions.assertEquals("0000", rs.getErrorCode());
+		assertEquals("0000", rs.getErrorCode());
 	}
 
 
@@ -94,7 +126,7 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		Assertions.assertEquals("0000", rs.getErrorCode());
+		assertEquals("0000", rs.getErrorCode());
 	}
 
 
@@ -110,6 +142,6 @@ public class InwardRemittanceClaimTest {
 
 
 		// Assert
-		Assertions.assertEquals("0000", rs.getErrorCode());
+		assertEquals("0000", rs.getErrorCode());
 	}
 }

@@ -3,6 +3,7 @@ package com.firstbank.api.controller;
 import com.firstbank.api.model.ClaimInputModel;
 import com.firstbank.api.model.ClaimOutputModel;
 import java.math.BigDecimal;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,9 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/api")
 public class InwardRemittanceClaim {
+
+	//success
+	private final String successCode = "0000";
 
 	public InwardRemittanceClaim(InwardRemittance irService) {
 		this.irService = irService;
@@ -37,12 +41,11 @@ public class InwardRemittanceClaim {
 	}
 	private String checkValue(ClaimInputModel model){
 		//validate
-		String errorCodeCompile = "0000";  //success
 
 		// 1.驗證seqno
 		int seqNo = model.getSeqNo();
 		String errorCodeSeqNo = checkNumLength(seqNo, "error-001", 7);
-		if(!errorCodeCompile.equals(errorCodeSeqNo)){
+		if(!successCode.equals(errorCodeSeqNo)){
 			return errorCodeSeqNo;
 		}
 
@@ -50,33 +53,33 @@ public class InwardRemittanceClaim {
 		// 2.驗證recvBranch
 		int recvBranch = model.getRecvBranch();
 		String errorCodeRecvBranch = checkNumLength(recvBranch,"error-006",3);
-		if(!errorCodeCompile.equals(errorCodeRecvBranch)){
+		if(!successCode.equals(errorCodeRecvBranch)){
 			return errorCodeRecvBranch;
 		}
 
 		// 3.驗證txVersion
 		int txVersion = model.getTxVersion();
 		String errorCodeTxVersion = checkNumLength(txVersion,"error-017",2);
-		if(!errorCodeCompile.equals(errorCodeTxVersion)){
+		if(!successCode.equals(errorCodeTxVersion)){
 			return errorCodeTxVersion;
 		}
 
 		// 4.驗證seqno為數字
 		int seqNoNum = model.getSeqNo();
 		String errorCodeSeqNoNum = checkIsNum(seqNoNum,"error-002");
-		if(!errorCodeCompile.equals(errorCodeSeqNoNum)){
+		if(!successCode.equals(errorCodeSeqNoNum)){
 			return errorCodeSeqNoNum;
 		}
 
 		// 5.驗證CliaimAmount為數字
 		BigDecimal claimAmt = model.getClaimAmt();
 		String errorCodeClaimAmt = checkIsBigDecimalNum(claimAmt,"error-016");
-		if(!errorCodeCompile.equals(errorCodeClaimAmt)){
+		if(!successCode.equals(errorCodeClaimAmt)){
 			return errorCodeClaimAmt;
 		}
 
 
-		return errorCodeCompile;
+		return successCode;
 	}
 
 
