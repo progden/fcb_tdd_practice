@@ -1,15 +1,11 @@
 package com.firstbank.api.model;
 
+import lombok.Data;
+
+@Data
 public class ClaimInputModel {
     private int seqno;
-    
-    public int getSeqno() {
-        return seqno;
-    }
-
-    public void setSeqno(int seqno) {
-        this.seqno = seqno;
-    }
-
+    private int recvBranch;
+    private String processMode;
 
 }

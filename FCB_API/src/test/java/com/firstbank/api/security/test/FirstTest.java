@@ -21,7 +21,7 @@ public class FirstTest {
     private InwardRemittance irService;
 
     @BeforeEach
-    public void init(){
+    public void init() {
         irService = mock(InwardRemittance.class);
         claimService = new InwardRemittanceClaim(irService);
     }
@@ -31,7 +31,21 @@ public class FirstTest {
         // AAA
         // Arrange
         ClaimInputModel model = new ClaimInputModel();
-        model.setSeqno(3);
+        model.setSeqno(0);
+
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
+        Assertions.assertEquals("error-001", rs.getErrorCode());
+    }
+
+    @Test
+    public void GivenIntSeqNO() {
+        // AAA
+        // Arrange
+        ClaimInputModel model = new ClaimInputModel();
+        model.setSeqno(0);
 
         // Act
         var rs = claimService.claim(model);
@@ -51,6 +65,61 @@ public class FirstTest {
         var rs = claimService.claim(model);
 
         // Assert
+        Assertions.assertNull(rs.getErrorCode());
+    }
+
+    @Test
+    public void GivenLessSevenSeqNo() {
+        // AAA
+        // Arrange
+        ClaimInputModel model = new ClaimInputModel();
+        model.setSeqno(123456);
+
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
         Assertions.assertEquals("error-001", rs.getErrorCode());
+    }
+
+    @Test
+    public void GivenLessThreeRecvBranchShouldError() {
+        // AAA
+        // Arrange
+        ClaimInputModel model = new ClaimInputModel();
+        model.setSeqno(1234567);
+        model.setRecvBranch(12);
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
+        Assertions.assertEquals("error-006", rs.getErrorCode());
+    }
+
+    @Test
+    public void GivenOverThreeRecvBranchShouldError() {
+        // AAA
+        // Arrange
+        ClaimInputModel model = new ClaimInputModel();
+        model.setSeqno(1234567);
+        model.setRecvBranch(1212);
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
+        Assertions.assertEquals("error-006", rs.getErrorCode());
+    }
+
+    @Test
+    public void GivenProcessModeError() {
+        // AAA
+        // Arrange
+        ClaimInputModel model = new ClaimInputModel();
+        model.setProcessMode("X");
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
+        Assertions.assertEquals("error-006", rs.getErrorCode());
     }
 }
