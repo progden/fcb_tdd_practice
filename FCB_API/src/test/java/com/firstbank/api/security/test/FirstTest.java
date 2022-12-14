@@ -4,11 +4,14 @@ import com.firstbank.api.SpringAppBootstrapper;
 import com.firstbank.api.controller.InwardRemittance;
 import com.firstbank.api.controller.InwardRemittanceClaim;
 import com.firstbank.api.model.ClaimInputModel;
+import com.firstbank.api.model.ClaimOutputModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -29,7 +32,8 @@ public class FirstTest {
         model = new ClaimInputModel();
         model.setSeqno(1234567);
         model.setRecvBranch(121);
-        model.setProcessMode("A");
+        model.setDealingDate(new Date());
+        GivenProcessMode("C");
     }
 
     @Test
@@ -41,7 +45,6 @@ public class FirstTest {
 
         // Assert
         assertNull(rs.getErrorCode());
-        assertEquals(null, rs.getErrorCode());
     }
 
     @Test
@@ -54,7 +57,7 @@ public class FirstTest {
         var rs = claimService.claim(model);
 
         // Assert
-        assertEquals("error-001", rs.getErrorCode());
+        shouldReturnError("error-001", rs);
     }
 
     @Test
@@ -67,7 +70,11 @@ public class FirstTest {
         var rs = claimService.claim(model);
 
         // Assert
-        assertEquals("error-001", rs.getErrorCode());
+        shouldReturnError("error-001", rs);
+    }
+
+    private static void shouldReturnError(String expected, ClaimOutputModel rs) {
+        assertEquals(expected, rs.getErrorCode());
     }
 
     @Test
@@ -79,7 +86,7 @@ public class FirstTest {
         var rs = claimService.claim(model);
 
         // Assert
-        assertEquals("error-006", rs.getErrorCode());
+        shouldReturnError("error-006", rs);
     }
 
     @Test
@@ -91,18 +98,44 @@ public class FirstTest {
         var rs = claimService.claim(model);
 
         // Assert
-        assertEquals("error-006", rs.getErrorCode());
+        shouldReturnError("error-006", rs);
     }
 
     @Test
-    public void GivenProcessModeError() {
+    public void GivenProcessModeIsXShouldReturnError004() {
         // AAA
         // Arrange
-        model.setProcessMode("X");
+        GivenProcessMode("X");
         // Act
         var rs = claimService.claim(model);
 
         // Assert
-        assertEquals("error-004", rs.getErrorCode());
+        shouldReturnError("error-004", rs);
+    }
+    @Test
+    public void GivenProcessModeIsNullShouldReturnError004() {
+        // AAA
+        // Arrange
+        GivenProcessMode(null);
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
+        shouldReturnError("error-004", rs);
+    }
+
+    private void GivenProcessMode(String X) {
+        model.setProcessMode(X);
+    }
+    @Test
+    public void GivenDealingDateIsWrongFormatShouldReturnError007(){
+        // AAA
+        // Arrange
+        model.setDealingDate(null);
+        // Act
+        var rs = claimService.claim(model);
+
+        // Assert
+        shouldReturnError("error-007", rs);
     }
 }
