@@ -1,10 +1,10 @@
 package com.firstbank.api.security.test;
 
 import com.firstbank.api.SpringAppBootstrapper;
+import com.firstbank.api.controller.CurrencyService;
 import com.firstbank.api.controller.InwardRemittance;
 import com.firstbank.api.controller.InwardRemittanceClaim;
 import com.firstbank.api.model.ClaimInputModel;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,11 +19,13 @@ public class FirstTest {
 
     InwardRemittanceClaim claimService;
     private InwardRemittance irService;
+    private CurrencyService currencyService;
 
     @BeforeEach
     public void init(){
         irService = mock(InwardRemittance.class);
-        claimService = new InwardRemittanceClaim(irService);
+        currencyService = mock(CurrencyService.class);
+        claimService = new InwardRemittanceClaim(irService, currencyService);
     }
 
     @Test

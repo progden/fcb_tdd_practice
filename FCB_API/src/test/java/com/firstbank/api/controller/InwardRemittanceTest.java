@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 
 import com.firstbank.api.SpringAppBootstrapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -17,11 +16,13 @@ public class InwardRemittanceTest {
 
 	InwardRemittanceClaim claimService;
 	private InwardRemittance irService;
+	private CurrencyService currencyService;
 
 	@BeforeEach
 	public void init(){
 		irService = mock(InwardRemittance.class);
-		claimService = new InwardRemittanceClaim(irService);
+		currencyService = mock(CurrencyService.class);
+		claimService = new InwardRemittanceClaim(irService, currencyService);
 	}
 
 

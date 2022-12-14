@@ -3,14 +3,10 @@ package com.firstbank.api.controller;
 import com.firstbank.api.model.ClaimInputModel;
 import com.firstbank.api.model.ClaimOutputModel;
 import java.math.BigDecimal;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
-import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api")
@@ -19,25 +15,42 @@ public class InwardRemittanceClaim {
 	//success
 	private final String successCode = "0000";
 
-	public InwardRemittanceClaim(InwardRemittance irService) {
+	public InwardRemittanceClaim(InwardRemittance irService, CurrencyService currencyService) {
 		this.irService = irService;
+		this.currencyService = currencyService;
 	}
 
 	@Autowired
 	InwardRemittance irService;
+
+	@Autowired
+	CurrencyService currencyService;
 
 	@GetMapping("/claim")
 	public ClaimOutputModel claim(ClaimInputModel model) {
 		ClaimOutputModel output = new ClaimOutputModel();
 
 		String errorCode = checkValue(model);
-		output.setErrorCode(errorCode);
+         if(successCode.equals(errorCode)){
+	         boolean isValidCurrency = currencyService.checkValidCurrency(model.getSendBank(),
+		         model.getClaimCurrency());
+	         if(isValidCurrency){
+		         output.setErrorCode(successCode);
+	         }else{
+		         output.setErrorCode("error-011");
+	         }
+         }else{
+	         output.setErrorCode(errorCode);
+         }
+
 
 		//生成
 		//保存
 
 		return output;
 	}
+
+
 
 	private String checkValue(ClaimInputModel model) {
 		//validate
@@ -84,8 +97,16 @@ public class InwardRemittanceClaim {
 			return errorCodeClaimFxrate;
 		}
 
+//		// 6.驗證CliaimFxRate為前4碼後5碼數字
+//		String claimCurrency = model.getClaimCurrency();
+//		String errorCodeClaimCurrenct = checkStringLengthAndFormat(claimCurrency, "error-011");
+//		if (!successCode.equals(errorCodeClaimFxrate)) {
+//			return errorCodeClaimFxrate;
+//		}
 		return successCode;
 	}
+
+
 
 
 	private String checkFxRateFormat(BigDecimal claimFxrate, String errorCode) {
