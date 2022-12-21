@@ -22,6 +22,7 @@ public class FirstTest {
     private InwardRemittance irService;
     private ClaimInputModel model;
 
+
     @BeforeEach
     public void init() {
         irService = mock(InwardRemittance.class);
