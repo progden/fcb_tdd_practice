@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.firstbank.api.SpringAppBootstrapper;
 import com.firstbank.api.model.ClaimInputModel;
 import com.firstbank.api.model.ClaimOutputModel;
 import java.math.BigDecimal;
@@ -13,17 +14,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 //@ExtendWith(SpringExtension.class)
 //@SpringBootTest(classes = SpringAppBootstrapper.class)
 public class InwardRemittanceClaimTest {
 
 
-	private CurrencyService currencyService;
+	private CurrencyService currencyService = mock(CurrencyService.class);
 	InwardRemittanceClaim claimService;
-	private InwardRemittance irService;
-
+	private InwardRemittance irService = mock(InwardRemittance.class);
 	ClaimInputModel  model = null;
 
 	@BeforeEach
@@ -34,6 +37,7 @@ public class InwardRemittanceClaimTest {
 		model= new ClaimInputModel();
 		model.setSeqNo(1234567);
 		model.setRecvBranch(123);
+
 		model.setTxVersion(66);
 		model.setClaimAmt(new BigDecimal(399.325));
 		model.setClaimFxrate(new BigDecimal("1234.56789"));
@@ -133,7 +137,14 @@ public class InwardRemittanceClaimTest {
 	@Test
 	@DisplayName(value = "測試ClaimAmount只能是數字")
 
+
+
+
+
 	public void GivenClaimAmountShouldNum(){
+
+
+
 
 
 
