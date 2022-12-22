@@ -5,18 +5,18 @@ import com.firstbank.api.model.ApplyPhoneNumberOutputModel;
 
 public class ApplyPhoneNumberService {
     //
-    private final CheckPhoneNumberService checkNubmerService;
+    private final CheckPhoneNumberService checkNumberService;
     private final ApplyRepository applyRepository;
     // private UnitRepository unitRepository;
 
     public ApplyPhoneNumberService(CheckPhoneNumberService checkNubmerService, ApplyRepository applyRepository) {
-        this.checkNubmerService = checkNubmerService;
+        this.checkNumberService = checkNubmerService;
         this.applyRepository = applyRepository;
     }
 
     public ApplyPhoneNumberOutputModel apply(ApplyPhoneNumberInputModel input) {
         ApplyPhoneNumberOutputModel rs = new ApplyPhoneNumberOutputModel();
-        // boolean goNext => 判斷要不要進入判斷
+
         if (validateAgeGreaterThen18(input)) {
             rs.setReturnMsg("fail");
             return rs;
@@ -45,7 +45,7 @@ public class ApplyPhoneNumberService {
     }
 
     private boolean validatePhoneNumberCorrect(ApplyPhoneNumberInputModel input) {
-        return !checkNubmerService.checkPhoneNumber(input.getPhoneNumber());
+        return !checkNumberService.checkPhoneNumber(input.getPhoneNumber());
     }
 
     private static boolean validateAgeGreaterThen18(ApplyPhoneNumberInputModel input) {

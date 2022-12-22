@@ -24,7 +24,7 @@ public class ApplyPhoneNumberTest {
     public static final String INVALID_PHONE_NUMBER = "0987654322";
     public static final String VALID_PHONE_NUMBER = "0987654321";
     ApplyPhoneNumberService applyPhoneNumberService;
-    private CheckPhoneNumberService checkNubmerService;
+    private CheckPhoneNumberService checkNumberService;
     private ApplyRepository applyRepository;
     private ApplyPhoneNumberInputModel applyInput;
 
@@ -32,16 +32,16 @@ public class ApplyPhoneNumberTest {
     @BeforeEach
     public void init() {
         // mock 實作interface
-        checkNubmerService = mock(CheckPhoneNumberService.class);
+        checkNumberService = mock(CheckPhoneNumberService.class);
         applyRepository = mock(ApplyRepository.class);
 
-        applyPhoneNumberService = new ApplyPhoneNumberService(checkNubmerService, applyRepository);
+        applyPhoneNumberService = new ApplyPhoneNumberService(checkNumberService, applyRepository);
         applyInput = new ApplyPhoneNumberInputModel();
         applyInput.setAge(18);
         applyInput.setPhoneNumber(VALID_PHONE_NUMBER);
 
-        when(checkNubmerService.checkPhoneNumber(eq(VALID_PHONE_NUMBER))).thenReturn(true);
-        when(checkNubmerService.checkPhoneNumber(eq(INVALID_PHONE_NUMBER))).thenReturn(false);
+        when(checkNumberService.checkPhoneNumber(eq(VALID_PHONE_NUMBER))).thenReturn(true);
+        when(checkNumberService.checkPhoneNumber(eq(INVALID_PHONE_NUMBER))).thenReturn(false);
 
     }
 
@@ -113,7 +113,7 @@ public class ApplyPhoneNumberTest {
 
         // Arrange
         // 當check被呼叫到時,丟出RuntimeException
-        doThrow(RuntimeException.class).when(checkNubmerService).checkPhoneNumber(any());
+        doThrow(RuntimeException.class).when(checkNumberService).checkPhoneNumber(any());
 
         // Act
         ApplyPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
@@ -153,7 +153,7 @@ public class ApplyPhoneNumberTest {
     }
 
     private boolean verifyCheckIsCalled() {
-        return verify(checkNubmerService).checkPhoneNumber(anyString());
+        return verify(checkNumberService).checkPhoneNumber(anyString());
     }
 
     private static void applyPhoneNumberShouldCorrect(ApplyPhoneNumberOutputModel output) {
