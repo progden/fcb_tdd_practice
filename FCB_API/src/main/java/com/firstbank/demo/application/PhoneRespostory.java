@@ -1,8 +1,9 @@
 package com.firstbank.demo.application;
 
-import com.firstbank.api.demo.controller.PhoneInput;
+import com.firstbank.demo.application.controller.PhoneInput;
+import java.sql.SQLException;
 
 public interface PhoneRespostory {
 
-	void save(PhoneInput phoneInput);
+	boolean save(PhoneInput phoneInput);
 }
