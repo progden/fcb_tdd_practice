@@ -1,4 +1,4 @@
-package com.firstbank.api.interfa;
+package com.firstbank.api.repo;
 
 public interface ApplyRepository {
      void save();

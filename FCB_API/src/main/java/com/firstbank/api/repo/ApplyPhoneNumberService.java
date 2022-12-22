@@ -1,15 +1,15 @@
-package com.firstbank.api.interfa;
+package com.firstbank.api.repo;
 
 import com.firstbank.api.model.ApplyPhoneNumberInputModel;
 import com.firstbank.api.model.ApplyPhoneNumberOutputModel;
 
 public class ApplyPhoneNumberService {
     //
-    private final CheckPhoneNumberService checkNumberService;
+    private final CheckPhoneNumberRepo checkNumberService;
     private final ApplyRepository applyRepository;
     // private UnitRepository unitRepository;
 
-    public ApplyPhoneNumberService(CheckPhoneNumberService checkNubmerService, ApplyRepository applyRepository) {
+    public ApplyPhoneNumberService(CheckPhoneNumberRepo checkNubmerService, ApplyRepository applyRepository) {
         this.checkNumberService = checkNubmerService;
         this.applyRepository = applyRepository;
     }
@@ -31,9 +31,6 @@ public class ApplyPhoneNumberService {
             rs.setReturnMsg("fail");
             return rs;
         }
-        // String unitCode = null;
-        // String currency = null;
-        // boolean validCurrency = unitRepository.validateCurrency(unitCode, currency);
 
         try {
             applyRepository.save();

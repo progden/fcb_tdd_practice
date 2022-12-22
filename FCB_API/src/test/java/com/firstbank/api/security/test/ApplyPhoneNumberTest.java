@@ -1,9 +1,9 @@
 package com.firstbank.api.security.test;
 
 import com.firstbank.api.SpringAppBootstrapper;
-import com.firstbank.api.interfa.ApplyPhoneNumberService;
-import com.firstbank.api.interfa.ApplyRepository;
-import com.firstbank.api.interfa.CheckPhoneNumberService;
+import com.firstbank.api.repo.ApplyPhoneNumberService;
+import com.firstbank.api.repo.ApplyRepository;
+import com.firstbank.api.repo.CheckPhoneNumberRepo;
 import com.firstbank.api.model.ApplyPhoneNumberInputModel;
 import com.firstbank.api.model.ApplyPhoneNumberOutputModel;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,28 +20,27 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = SpringAppBootstrapper.class)
 public class ApplyPhoneNumberTest {
-
     public static final String INVALID_PHONE_NUMBER = "0987654322";
     public static final String VALID_PHONE_NUMBER = "0987654321";
-    ApplyPhoneNumberService applyPhoneNumberService;
-    private CheckPhoneNumberService checkNumberService;
+    private ApplyPhoneNumberService applyPhoneNumberService;
+    private CheckPhoneNumberRepo checkPhoneNumberRepo;
     private ApplyRepository applyRepository;
     private ApplyPhoneNumberInputModel applyInput;
-
     // BeforeEach 讓程式一進來先固定跑這段
+
     @BeforeEach
     public void init() {
         // mock 實作interface
-        checkNumberService = mock(CheckPhoneNumberService.class);
+        checkPhoneNumberRepo = mock(CheckPhoneNumberRepo.class);
         applyRepository = mock(ApplyRepository.class);
 
-        applyPhoneNumberService = new ApplyPhoneNumberService(checkNumberService, applyRepository);
+        applyPhoneNumberService = new ApplyPhoneNumberService(checkPhoneNumberRepo, applyRepository);
         applyInput = new ApplyPhoneNumberInputModel();
         applyInput.setAge(18);
         applyInput.setPhoneNumber(VALID_PHONE_NUMBER);
 
-        when(checkNumberService.checkPhoneNumber(eq(VALID_PHONE_NUMBER))).thenReturn(true);
-        when(checkNumberService.checkPhoneNumber(eq(INVALID_PHONE_NUMBER))).thenReturn(false);
+        when(checkPhoneNumberRepo.checkPhoneNumber(eq(VALID_PHONE_NUMBER))).thenReturn(true);
+        when(checkPhoneNumberRepo.checkPhoneNumber(eq(INVALID_PHONE_NUMBER))).thenReturn(false);
 
     }
 
@@ -113,7 +112,7 @@ public class ApplyPhoneNumberTest {
 
         // Arrange
         // 當check被呼叫到時,丟出RuntimeException
-        doThrow(RuntimeException.class).when(checkNumberService).checkPhoneNumber(any());
+        doThrow(RuntimeException.class).when(checkPhoneNumberRepo).checkPhoneNumber(any());
 
         // Act
         ApplyPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
@@ -153,7 +152,7 @@ public class ApplyPhoneNumberTest {
     }
 
     private boolean verifyCheckIsCalled() {
-        return verify(checkNumberService).checkPhoneNumber(anyString());
+        return verify(checkPhoneNumberRepo).checkPhoneNumber(anyString());
     }
 
     private static void applyPhoneNumberShouldCorrect(ApplyPhoneNumberOutputModel output) {
