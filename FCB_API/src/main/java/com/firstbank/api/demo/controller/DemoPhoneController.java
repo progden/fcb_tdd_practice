@@ -18,8 +18,11 @@ public class DemoPhoneController {
 	public boolean createPhoneNum(PhoneInput phoneInput) {
 		int age = phoneInput.getAge();
 		if (age < 18) {
+
 			return false;
 		}
+
+
 
 		try {
 			if (phoneService.checkPhoneNum(phoneInput.getPhoneNum())) {
