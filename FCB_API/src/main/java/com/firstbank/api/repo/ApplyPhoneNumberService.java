@@ -32,8 +32,18 @@ public class ApplyPhoneNumberService {
             return rs;
         }
 
+        if(input.getAge() >= 50){
+            input.setUsrLevel("LMaster");
+        }else if(input.getAge() >= 30){
+            input.setUsrLevel("LMagician");
+        }else{
+            input.setUsrLevel("L0");
+        }
+
+
+
         try {
-            applyRepository.save();
+            applyRepository.save(input);
         } catch (RuntimeException ex) {
             throw new RuntimeException("error-019");
         }

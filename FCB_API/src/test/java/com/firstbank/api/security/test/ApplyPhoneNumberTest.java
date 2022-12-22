@@ -9,6 +9,7 @@ import com.firstbank.api.model.ApplyPhoneNumberOutputModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -42,6 +43,7 @@ public class ApplyPhoneNumberTest {
         when(checkPhoneNumberRepo.checkPhoneNumber(eq(VALID_PHONE_NUMBER))).thenReturn(true);
         when(checkPhoneNumberRepo.checkPhoneNumber(eq(INVALID_PHONE_NUMBER))).thenReturn(false);
 
+        when(applyRepository.save(any())).thenReturn(true);
     }
 
     @Test
@@ -131,7 +133,7 @@ public class ApplyPhoneNumberTest {
         ApplyPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
 
         // Assert
-        verify(applyRepository).save();
+        verify(applyRepository).save(applyInput);
         applyPhoneNumberShouldCorrect(output);
     }
 
@@ -139,7 +141,7 @@ public class ApplyPhoneNumberTest {
     public void 滿18且門號未被申請且儲存連線發生異常_進行申請_拋出例外error_019() {
 
         // Arrange
-        doThrow(RuntimeException.class).when(applyRepository).save();
+        doThrow(RuntimeException.class).when(applyRepository).save(any());
 
         // Act
         //當apply丟出例外,而且例外是RuntimeException，把錯誤指給ex
@@ -147,8 +149,53 @@ public class ApplyPhoneNumberTest {
                 () -> applyPhoneNumberService.apply(applyInput));
 
         // Assert
-        verify(applyRepository).save();
+        verify(applyRepository).save(any());
         assertEquals("error-019", ex.getMessage());
+    }
+
+    @Test
+    public void 成年使用者_進行申辦手機_應該是個一般L0用戶() {
+
+        // Arrange
+
+        // Act
+        applyPhoneNumberService.apply(applyInput);
+
+        // Assert
+        validateSaveArgumentShouldBe("L0");
+    }
+
+    @Test
+    public void 一個30歲以上使用者_進行申辦手機_應該是個魔法師LMagician用戶() {
+
+        // Arrange
+        applyInput.setAge(31);
+
+        // Act
+        applyPhoneNumberService.apply(applyInput);
+
+        // Assert
+        validateSaveArgumentShouldBe("LMagician");
+    }
+
+    @Test
+    public void 一個50歲以上使用者_進行申辦手機_應該是個魔導師LMaster用戶() {
+
+        // Arrange
+        applyInput.setAge(51);
+
+        // Act
+        applyPhoneNumberService.apply(applyInput);
+
+        // Assert
+        validateSaveArgumentShouldBe("LMaster");
+    }
+
+    private void validateSaveArgumentShouldBe(String usrLevel) {
+        var captor = ArgumentCaptor.forClass(ApplyPhoneNumberInputModel.class);
+        verify(applyRepository).save(captor.capture());
+        var in = captor.getValue();
+        assertEquals(usrLevel, in.getUsrLevel());
     }
 
     private boolean verifyCheckIsCalled() {

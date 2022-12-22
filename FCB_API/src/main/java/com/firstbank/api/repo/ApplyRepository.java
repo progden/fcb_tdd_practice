@@ -1,5 +1,7 @@
 package com.firstbank.api.repo;
 
+import com.firstbank.api.model.ApplyPhoneNumberInputModel;
+
 public interface ApplyRepository {
-     void save();
+     Boolean save(ApplyPhoneNumberInputModel saveInput);
 }
