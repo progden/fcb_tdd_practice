@@ -1,23 +1,23 @@
 package com.firstbank.api.interfa;
 
 import com.firstbank.api.model.ApplyPhoneNumberInputModel;
-import com.firstbank.api.model.CheckPhoneNumberOutputModel;
+import com.firstbank.api.model.ApplyPhoneNumberOutputModel;
 
 public class ApplyPhoneNumberService {
     //
-    private final CheckNubmerService checkNubmerService;
+    private final CheckPhoneNumberService checkNubmerService;
     private final ApplyRepository applyRepository;
-    private UnitRepository unitRepository;
+    // private UnitRepository unitRepository;
 
-    public ApplyPhoneNumberService(CheckNubmerService checkNubmerService, ApplyRepository applyRepository) {
+    public ApplyPhoneNumberService(CheckPhoneNumberService checkNubmerService, ApplyRepository applyRepository) {
         this.checkNubmerService = checkNubmerService;
         this.applyRepository = applyRepository;
     }
 
-    public CheckPhoneNumberOutputModel apply(ApplyPhoneNumberInputModel input) {
-        CheckPhoneNumberOutputModel rs = new CheckPhoneNumberOutputModel();
+    public ApplyPhoneNumberOutputModel apply(ApplyPhoneNumberInputModel input) {
+        ApplyPhoneNumberOutputModel rs = new ApplyPhoneNumberOutputModel();
         // boolean goNext => 判斷要不要進入判斷
-        if (valiateAgeGreateThen18(input)) {
+        if (validateAgeGreaterThen18(input)) {
             rs.setReturnMsg("fail");
             return rs;
         }
@@ -45,10 +45,10 @@ public class ApplyPhoneNumberService {
     }
 
     private boolean validatePhoneNumberCorrect(ApplyPhoneNumberInputModel input) {
-        return !checkNubmerService.check(input.getPhoneNumber());
+        return !checkNubmerService.checkPhoneNumber(input.getPhoneNumber());
     }
 
-    private static boolean valiateAgeGreateThen18(ApplyPhoneNumberInputModel input) {
+    private static boolean validateAgeGreaterThen18(ApplyPhoneNumberInputModel input) {
         return input.getAge() < 18;
     }
 }

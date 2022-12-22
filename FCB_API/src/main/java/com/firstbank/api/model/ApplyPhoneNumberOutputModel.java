@@ -1,6 +1,6 @@
 package com.firstbank.api.model;
 
-public class CheckPhoneNumberOutputModel {
+public class ApplyPhoneNumberOutputModel {
 
     private String returnMsg;
 

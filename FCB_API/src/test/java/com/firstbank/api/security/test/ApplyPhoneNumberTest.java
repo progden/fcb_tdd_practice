@@ -3,9 +3,9 @@ package com.firstbank.api.security.test;
 import com.firstbank.api.SpringAppBootstrapper;
 import com.firstbank.api.interfa.ApplyPhoneNumberService;
 import com.firstbank.api.interfa.ApplyRepository;
-import com.firstbank.api.interfa.CheckNubmerService;
+import com.firstbank.api.interfa.CheckPhoneNumberService;
 import com.firstbank.api.model.ApplyPhoneNumberInputModel;
-import com.firstbank.api.model.CheckPhoneNumberOutputModel;
+import com.firstbank.api.model.ApplyPhoneNumberOutputModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ public class ApplyPhoneNumberTest {
     public static final String INVALID_PHONE_NUMBER = "0987654322";
     public static final String VALID_PHONE_NUMBER = "0987654321";
     ApplyPhoneNumberService applyPhoneNumberService;
-    private CheckNubmerService checkNubmerService;
+    private CheckPhoneNumberService checkNubmerService;
     private ApplyRepository applyRepository;
     private ApplyPhoneNumberInputModel applyInput;
 
@@ -32,7 +32,7 @@ public class ApplyPhoneNumberTest {
     @BeforeEach
     public void init() {
         // mock 實作interface
-        checkNubmerService = mock(CheckNubmerService.class);
+        checkNubmerService = mock(CheckPhoneNumberService.class);
         applyRepository = mock(ApplyRepository.class);
 
         applyPhoneNumberService = new ApplyPhoneNumberService(checkNubmerService, applyRepository);
@@ -40,54 +40,54 @@ public class ApplyPhoneNumberTest {
         applyInput.setAge(18);
         applyInput.setPhoneNumber(VALID_PHONE_NUMBER);
 
-        when(checkNubmerService.check(eq(VALID_PHONE_NUMBER))).thenReturn(true);
-        when(checkNubmerService.check(eq(INVALID_PHONE_NUMBER))).thenReturn(false);
+        when(checkNubmerService.checkPhoneNumber(eq(VALID_PHONE_NUMBER))).thenReturn(true);
+        when(checkNubmerService.checkPhoneNumber(eq(INVALID_PHONE_NUMBER))).thenReturn(false);
 
     }
 
     @Test
-    public void 未滿18歲_申辦手機_不可以申辦() {
+    public void 當年齡17歲的人_進行申辦手機_預期申辦失敗() {
         // Arrange
         applyInput.setAge(17);
 
         // Act
-        CheckPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
+        ApplyPhoneNumberOutputModel rs = applyPhoneNumberService.apply(applyInput);
 
         // Assert
-        applyPhoneNumberShouldIncorrect(output);
+        applyPhoneNumberShouldIncorrect(rs);
     }
 
     // 拉出來重構，簡短原本測試方法內的程式碼
     @Test
-    public void 剛好18歲_申辦手機_可以申辦() {
+    public void 當年齡剛好18歲的人_進行申辦手機_預期申辦成功() {
         // Arrange
         applyInput.setAge(18);
 
         // Act
-        CheckPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
+        ApplyPhoneNumberOutputModel rs = applyPhoneNumberService.apply(applyInput);
 
         // Assert
-        applyPhoneNumberShouldCorrect(output);
+        applyPhoneNumberShouldCorrect(rs);
     }
 
     @Test
-    public void 超過18歲_申辦手機_可以申辦() {
+    public void 當年齡19歲的人_進行申辦手機_預期申辦失敗() {
         // Arrange
         applyInput.setAge(19);
 
         // Act
-        CheckPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
+        ApplyPhoneNumberOutputModel rs = applyPhoneNumberService.apply(applyInput);
 
         // Assert
-        applyPhoneNumberShouldCorrect(output);
+        applyPhoneNumberShouldCorrect(rs);
     }
 
     @Test
-    public void 門號未被申請過可以申辦手機() {
+    public void 驗證門號未被申請過_進行手機申辦_預期申辦成功() {
         // Arrange
 
         // Act
-        CheckPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
+        ApplyPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
 
         // Assert
         verifyCheckIsCalled();
@@ -95,13 +95,13 @@ public class ApplyPhoneNumberTest {
     }
 
     @Test
-    public void 門號已被申請過不可以申辦手機() {
+    public void 驗證門號已被申請過_進行手機申辦_預期申辦失敗() {
 
         // Arrange
         applyInput.setPhoneNumber(INVALID_PHONE_NUMBER);
 
         // Act
-        CheckPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
+        ApplyPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
 
         // Assert
         verifyCheckIsCalled();
@@ -113,10 +113,10 @@ public class ApplyPhoneNumberTest {
 
         // Arrange
         // 當check被呼叫到時,丟出RuntimeException
-        doThrow(RuntimeException.class).when(checkNubmerService).check(any());
+        doThrow(RuntimeException.class).when(checkNubmerService).checkPhoneNumber(any());
 
         // Act
-        CheckPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
+        ApplyPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
 
         // Assert
         verifyCheckIsCalled();
@@ -129,7 +129,7 @@ public class ApplyPhoneNumberTest {
         // Arrange
 
         // Act
-        CheckPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
+        ApplyPhoneNumberOutputModel output = applyPhoneNumberService.apply(applyInput);
 
         // Assert
         verify(applyRepository).save();
@@ -153,14 +153,14 @@ public class ApplyPhoneNumberTest {
     }
 
     private boolean verifyCheckIsCalled() {
-        return verify(checkNubmerService).check(anyString());
+        return verify(checkNubmerService).checkPhoneNumber(anyString());
     }
 
-    private static void applyPhoneNumberShouldCorrect(CheckPhoneNumberOutputModel output) {
+    private static void applyPhoneNumberShouldCorrect(ApplyPhoneNumberOutputModel output) {
         assertEquals("success", output.getReturnMsg());
     }
 
-    private static void applyPhoneNumberShouldIncorrect(CheckPhoneNumberOutputModel output) {
+    private static void applyPhoneNumberShouldIncorrect(ApplyPhoneNumberOutputModel output) {
         // 判斷回傳的output內的ReturnMsg跟期望值要一致
         assertEquals("fail", output.getReturnMsg());
     }
